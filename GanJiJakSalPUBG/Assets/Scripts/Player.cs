@@ -5,16 +5,11 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float rotationSpeed = 100f;
 
+    [SerializeField]
     private Rigidbody rb;
     private float moveX;
     private float moveY;
     private float rotationY;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
 
     // Update is called once per frame
     void Update()
