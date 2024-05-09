@@ -19,8 +19,8 @@ public class PlayerController_KDY : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        moveX = Input.GetAxis("Horizontal");
-        moveY = Input.GetAxis("Vertical");
+        //moveX = Input.GetAxis("Horizontal");
+        //moveY = Input.GetAxis("Vertical");
         rotationY += Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
         rotationX += Input.GetAxis("Mouse Y") * rotationSpeed * 0.1f * Time.deltaTime;
 
@@ -32,7 +32,7 @@ public class PlayerController_KDY : MonoBehaviour
 
     void FixedUpdate()
     {
-        Vector3 movement = transform.forward * moveY + transform.right * moveX;
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
+        //Vector3 movement = transform.forward * moveY + transform.right * moveX;
+        //rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
     }
 }
