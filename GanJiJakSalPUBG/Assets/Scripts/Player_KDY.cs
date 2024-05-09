@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController_KDY : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float rotationSpeed = 100f;
