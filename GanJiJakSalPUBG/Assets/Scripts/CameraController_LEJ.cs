@@ -1,6 +1,5 @@
 using UnityEngine;
 using Cinemachine;
-using Cinemachine.PostFX;
 using System.Collections;
 
 public class CameraController_LEJ : MonoBehaviour
@@ -8,47 +7,71 @@ public class CameraController_LEJ : MonoBehaviour
     public CinemachineVirtualCamera firstPersonCamera;
     public CinemachineVirtualCamera thirdPersonCamera;
 
+    public CinemachineFreeLook thirdFreeCamera;
+    //public CinemachineFreeLook Aimming3FreeCamera;
+
     public CinemachineVirtualCamera Aimming1Camera;
     public CinemachineVirtualCamera Aimming3Camera;
 
     public GameObject playerUpperBody; // 플레이어 상체를 나타내는 GameObject
 
-    /*public GameObject imageToShow; // 화면에 보여줄 이미지 GameObject
-    public float zoomAmount = 2f; // 화면 확대량*/
+    public CinemachineFreeLook AltCamera;
 
-    private CinemachineVirtualCamera currentCamera;
+    private GameObject currentCamera;
 
     private bool isFirstPersonActive;
     private bool reboundRunning;
     private bool isRightClicking; // 오른쪽 마우스 클릭 상태를 저장하는 변수
+    private bool isAltPressed; // 왼쪽 Alt 키 상태를 저장하는 변수
 
     void Start()
     {
         firstPersonCamera.gameObject.SetActive(false);
         thirdPersonCamera.gameObject.SetActive(true);
-        currentCamera = thirdPersonCamera;
+        currentCamera = thirdPersonCamera.gameObject;
         isFirstPersonActive = false;
         reboundRunning = false;
         isRightClicking = false; // 초기값으로 오른쪽 클릭 상태는 false로 설정
-        //imageToShow.gameObject.SetActive(false);
+        isAltPressed = false; // 초기값으로 왼쪽 Alt 키 상태는 false로 설정
     }
 
     void Update()
     {
+        // 왼쪽 Alt 키 누름
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            isAltPressed = true;
+            thirdFreeCamera.gameObject.SetActive(true);
+            // FreeLook 카메라 활성화
+            //AltCamera.gameObject.SetActive(true);
+        }
+
+        // 왼쪽 Alt 키 뗌
+        if (Input.GetKeyUp(KeyCode.LeftAlt))
+        {
+            isAltPressed = false;
+            // FreeLook 카메라 비활성화
+            if (AltCamera != null)
+            {
+                thirdFreeCamera.gameObject.SetActive(false);
+                //AltCamera.gameObject.SetActive(false);
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.V))
         {
             if (isFirstPersonActive)
             {
                 firstPersonCamera.gameObject.SetActive(false);
-                thirdPersonCamera.gameObject.SetActive(true);
-                currentCamera = thirdPersonCamera;
+                thirdFreeCamera.gameObject.SetActive(true);
+                currentCamera = thirdPersonCamera.gameObject;
                 isFirstPersonActive = false;
             }
             else
             {
-                thirdPersonCamera.gameObject.SetActive(false);
+                thirdFreeCamera.gameObject.SetActive(false);
                 firstPersonCamera.gameObject.SetActive(true);
-                currentCamera = firstPersonCamera;
+                currentCamera = firstPersonCamera.gameObject;
                 isFirstPersonActive = true;
             }
         }
@@ -56,16 +79,17 @@ public class CameraController_LEJ : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             isRightClicking = true; // 오른쪽 마우스 클릭이 시작됨
-            currentCamera.gameObject.SetActive(false);
-            if (currentCamera == firstPersonCamera)
+            currentCamera.SetActive(false);
+            if (currentCamera == firstPersonCamera.gameObject)
             {
                 Aimming1Camera.gameObject.SetActive(true);
-                currentCamera = Aimming1Camera;
+                currentCamera = Aimming1Camera.gameObject;
             }
-            else if (currentCamera == thirdPersonCamera)
+            else if (currentCamera == thirdPersonCamera.gameObject)
             {
+                Aimming3Camera.transform.position = thirdFreeCamera.transform.position;
                 Aimming3Camera.gameObject.SetActive(true);
-                currentCamera = Aimming3Camera;
+                currentCamera = Aimming3Camera.gameObject;
             }
 
             // 플레이어 상체를 z축으로 45도 회전
@@ -78,24 +102,39 @@ public class CameraController_LEJ : MonoBehaviour
         if (Input.GetMouseButtonUp(1))
         {
             isRightClicking = false; // 오른쪽 마우스 클릭이 종료됨
-            currentCamera.gameObject.SetActive(false);
+            currentCamera.SetActive(false);
 
-            if (currentCamera == Aimming1Camera)
+            if (currentCamera == Aimming1Camera.gameObject)
             {
                 firstPersonCamera.gameObject.SetActive(true);
-                currentCamera = firstPersonCamera;
+                currentCamera = firstPersonCamera.gameObject;
             }
-            else if (currentCamera == Aimming3Camera)
+            else if (currentCamera == Aimming3Camera.gameObject)
             {
                 thirdPersonCamera.gameObject.SetActive(true);
-                currentCamera = thirdPersonCamera;
+                currentCamera = thirdPersonCamera.gameObject;
             }
 
-            // 플레이어 상체의 회전을 원래대로 되돌림
+            // 플레이어 상체 원래대로 되돌림
             if (playerUpperBody != null)
             {
                 playerUpperBody.transform.rotation = Quaternion.identity;
             }
+        }
+
+        // 마우스 입력 받기
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        // 카메라가 FreeLook가 아닌 경우에만 마우스 입력에 따라 회전하도록 함
+        if (!(currentCamera is CinemachineFreeLook))
+        {
+            // 수평 회전은 캐릭터의 좌우 회전에 영향을 주도록 함
+            transform.Rotate(Vector3.up, mouseX);
+
+            // 수직 회전은 마우스의 y축 이동에 따라 직접 회전하도록 함
+            float newRotationX = transform.eulerAngles.x - mouseY;
+            transform.rotation = Quaternion.Euler(newRotationX, transform.eulerAngles.y, transform.eulerAngles.z);
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -104,40 +143,16 @@ public class CameraController_LEJ : MonoBehaviour
             {
                 StopCoroutine(Rebound());
             }
-            StartCoroutine(Rebound());
-        }
 
-        /*// 오른쪽 마우스 클릭이 짧게 눌렸을 때 이미지 보이기 및 화면 확대
-        if (Input.GetMouseButtonDown(1) && !isRightClicking)
-        {
-            if (imageToShow != null)
+            if (currentCamera == thirdFreeCamera.gameObject || currentCamera == Aimming3Camera.gameObject)
             {
-                imageToShow.SetActive(true); // 이미지 보이기
+                StartCoroutine(FreeLookRebound());
             }
-            // 현재 카메라의 화면 확대
-            currentCamera.m_Lens.FieldOfView *= zoomAmount;
+            else
+            {
+                StartCoroutine(Rebound());
+            }
         }
-        // 오른쪽 마우스 클릭이 떼어졌을 때 이미지 숨기기 및 화면 축소
-        else if (Input.GetMouseButtonUp(1) && !isRightClicking)
-        {
-            if (imageToShow != null)
-            {
-                imageToShow.SetActive(false); // 이미지 숨기기
-            }
-            // 현재 카메라의 화면 축소
-            currentCamera.m_Lens.FieldOfView /= zoomAmount;
-        }
-        // 오른쪽 마우스 클릭이 눌린 상태에서 다시 눌린 경우
-        else if (Input.GetMouseButtonDown(1) && isRightClicking)
-        {
-            if (imageToShow != null)
-            {
-                imageToShow.SetActive(false); // 이미지 숨기기
-            }
-            // 현재 카메라의 화면 축소
-            currentCamera.m_Lens.FieldOfView /= zoomAmount;
-            isRightClicking = false; // 오른쪽 마우스 클릭 상태 초기화
-        }*/
     }
 
     IEnumerator Rebound()
@@ -145,12 +160,42 @@ public class CameraController_LEJ : MonoBehaviour
         reboundRunning = true;
 
         CinemachineBasicMultiChannelPerlin cbmcp =
-            currentCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            currentCamera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
         cbmcp.m_AmplitudeGain = 1;
 
         yield return new WaitForSeconds(0.3f);
 
         cbmcp.m_AmplitudeGain = 0;
         reboundRunning = false;
+    }
+
+    IEnumerator FreeLookRebound()
+    {
+        reboundRunning = true;
+
+        // AmplitudeGain을 1로 설정
+        SetAmplitudeGain(1f);
+
+        // 0.3초 대기
+        yield return new WaitForSeconds(0.3f);
+
+        // AmplitudeGain을 0으로 설정
+        SetAmplitudeGain(0f);
+
+        reboundRunning = false;
+
+    }
+
+    void SetAmplitudeGain(float amplitudeGain)
+    {
+        for (int i = 0; i < 3; i++) // TopRig (0), MiddleRig (1), BottomRig (2)에 대해 실행
+        {
+            var virtualCamera = currentCamera.GetComponent<CinemachineFreeLook>().GetRig(i);
+            var noise = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+            if (noise != null)
+            {
+                noise.m_AmplitudeGain = amplitudeGain;
+            }
+        }
     }
 }
