@@ -13,8 +13,8 @@ public class CameraController_LEJ : MonoBehaviour
 
     public GameObject playerUpperBody; // 플레이어 상체를 나타내는 GameObject
 
-    public GameObject imageToShow; // 화면에 보여줄 이미지 GameObject
-    public float zoomAmount = 2f; // 화면 확대량
+    /*public GameObject imageToShow; // 화면에 보여줄 이미지 GameObject
+    public float zoomAmount = 2f; // 화면 확대량*/
 
     private CinemachineVirtualCamera currentCamera;
 
@@ -30,6 +30,7 @@ public class CameraController_LEJ : MonoBehaviour
         isFirstPersonActive = false;
         reboundRunning = false;
         isRightClicking = false; // 초기값으로 오른쪽 클릭 상태는 false로 설정
+        //imageToShow.gameObject.SetActive(false);
     }
 
     void Update()
@@ -106,7 +107,7 @@ public class CameraController_LEJ : MonoBehaviour
             StartCoroutine(Rebound());
         }
 
-        // 오른쪽 마우스 클릭이 짧게 눌렸을 때 이미지 보이기 및 화면 확대
+        /*// 오른쪽 마우스 클릭이 짧게 눌렸을 때 이미지 보이기 및 화면 확대
         if (Input.GetMouseButtonDown(1) && !isRightClicking)
         {
             if (imageToShow != null)
@@ -136,7 +137,7 @@ public class CameraController_LEJ : MonoBehaviour
             // 현재 카메라의 화면 축소
             currentCamera.m_Lens.FieldOfView /= zoomAmount;
             isRightClicking = false; // 오른쪽 마우스 클릭 상태 초기화
-        }
+        }*/
     }
 
     IEnumerator Rebound()
