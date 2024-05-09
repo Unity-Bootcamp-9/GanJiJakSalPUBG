@@ -11,6 +11,8 @@ public class CameraController : MonoBehaviour
     public CinemachineVirtualCamera Aimming1Camera;
     public CinemachineVirtualCamera Aimming3Camera;
 
+    public GameObject playerUpperBody; // 플레이어 상체를 나타내는 GameObject
+
     private CinemachineVirtualCamera currentCamera;
 
     private bool isFirstPersonActive;
@@ -53,11 +55,16 @@ public class CameraController : MonoBehaviour
                 Aimming1Camera.gameObject.SetActive(true);
                 currentCamera = Aimming1Camera;
             }
-
             else if (currentCamera == thirdPersonCamera)
             {
                 Aimming3Camera.gameObject.SetActive(true);
                 currentCamera = Aimming3Camera;
+            }
+
+            // 플레이어 상체를 z축으로 45도 회전
+            if (playerUpperBody != null)
+            {
+                playerUpperBody.transform.Rotate(Vector3.back, 20f);
             }
         }
 
@@ -70,24 +77,27 @@ public class CameraController : MonoBehaviour
                 firstPersonCamera.gameObject.SetActive(true);
                 currentCamera = firstPersonCamera;
             }
-
             else if (currentCamera == Aimming3Camera)
             {
                 thirdPersonCamera.gameObject.SetActive(true);
                 currentCamera = thirdPersonCamera;
             }
+
+            // 플레이어 상체의 회전을 원래대로 되돌림
+            if (playerUpperBody != null)
+            {
+                playerUpperBody.transform.rotation = Quaternion.identity;
+            }
         }
 
         if (Input.GetMouseButtonDown(0))
         {
-            if(reboundRunning)
+            if (reboundRunning)
             {
                 StopCoroutine(Rebound());
             }
             StartCoroutine(Rebound());
         }
-
-
     }
 
     IEnumerator Rebound()
@@ -103,5 +113,4 @@ public class CameraController : MonoBehaviour
         cbmcp.m_AmplitudeGain = 0;
         reboundRunning = false;
     }
-
 }
