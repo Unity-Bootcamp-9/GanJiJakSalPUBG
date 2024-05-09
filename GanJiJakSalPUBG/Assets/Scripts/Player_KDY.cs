@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController_KDY : MonoBehaviour
@@ -21,12 +20,18 @@ public class PlayerController_KDY : MonoBehaviour
     {
         //moveX = Input.GetAxis("Horizontal");
         //moveY = Input.GetAxis("Vertical");
-        rotationY += Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
+        rotationY += Input.GetAxis("Mouse X") * rotationSpeed * 3 * Time.deltaTime;
         rotationX += Input.GetAxis("Mouse Y") * rotationSpeed * 0.1f * Time.deltaTime;
 
-        rotationX = Mathf.Clamp(rotationX, -1, 90f);
-
-        transform.eulerAngles = new Vector3(0, rotationY, 0);
+        rotationX = Mathf.Clamp(rotationX, 0, 1.5f);
+        if (Input.GetKey(KeyCode.LeftAlt))
+        {
+            transform.eulerAngles = transform.eulerAngles;
+        }
+        else
+        {
+            transform.eulerAngles = new Vector3(0, rotationY, 0);
+        }
         viewField.transform.position = new Vector3(viewField.transform.position.x, rotationX, viewField.transform.position.z);
     }
 
