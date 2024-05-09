@@ -11,6 +11,8 @@ public class CameraController : MonoBehaviour
     public CinemachineVirtualCamera Aimming1Camera;
     public CinemachineVirtualCamera Aimming3Camera;
 
+    public CinemachineFreeLook AltCamera;
+
     public GameObject playerUpperBody; // 플레이어 상체를 나타내는 GameObject
 
     private CinemachineVirtualCamera currentCamera;
@@ -98,6 +100,16 @@ public class CameraController : MonoBehaviour
             }
             StartCoroutine(Rebound());
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftAlt))
+        {
+            AltCamera.gameObject.SetActive(true);
+        }
+        if (Input.GetKeyUp(KeyCode.LeftAlt))
+        {
+            AltCamera.gameObject.SetActive(false);
+        }
+
     }
 
     IEnumerator Rebound()
