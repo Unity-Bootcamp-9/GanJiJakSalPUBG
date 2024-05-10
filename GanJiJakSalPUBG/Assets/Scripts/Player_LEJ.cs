@@ -18,7 +18,7 @@ public class Player_LEJ : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
 
-        rotationY += Input.GetAxis("Mouse X") * rotationSpeed * 3 * Time.deltaTime;
+        rotationY += Input.GetAxis("Mouse X") * rotationSpeed * 1.3f * Time.deltaTime;
         rotationX += Input.GetAxis("Mouse Y") * rotationSpeed * 0.1f * Time.deltaTime;
 
         rotationX = Mathf.Clamp(rotationX, -90f, 90f);
