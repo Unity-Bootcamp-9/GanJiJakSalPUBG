@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 public class PlayerController_LWL : MonoBehaviour
 {
@@ -26,3 +26,4 @@ public class PlayerController_LWL : MonoBehaviour
         rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
     }
 }
+*/
