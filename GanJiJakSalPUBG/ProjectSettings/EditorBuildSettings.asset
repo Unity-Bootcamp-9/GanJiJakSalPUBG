@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/StarterAssets/ThirdPersonController/Scenes/Playground_LEJ.unity
+    guid: 75d7f501b5643aa45a659c642a6263f3
   m_configObjects: {}
